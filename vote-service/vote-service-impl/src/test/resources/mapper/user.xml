@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjyx.vote.impl.mapper.UserMapper">
+  
+  	<insert id="save" parameterType="user" keyProperty="id" useGeneratedKeys="true">
+       insert into user
+       (
+          email,
+          sex,
+          age,
+          name,
+          username,
+          address,
+          head_image,
+          source,
+          create_time,
+          update_time
+       )
+       values
+       (
+          #{email},
+          #{sex},
+          #{age},
+          #{name},
+          #{username},
+          #{address},
+          #{head_image},
+          #{source},
+          now(),
+          now()
+       )
+    </insert>
+    
+    <update id="update">
+        update user set
+           <if test="email!=null and email!=''">email = #{email},</if>
+           <if test="name!=null and name!=''">name = #{name},</if>
+           <if test="sex!=null">sex = #{sex},</if>
+           <if test="age!=null and age!=0">age = #{age},</if>
+           <if test="address!=null and address!=''">address = #{address},</if>
+           <if test="head_image!=null and head_image!=''">head_image = #{head_image},</if>
+           update_time = now()  where id = #{id}
+    </update>
+    
+    <select id="selectById" resultType="user">
+         select id,email,sex,name,username,age,address,head_image,source,create_time,update_time 
+         from user
+    </select>
+    
+    <select id="list" resultType="user">
+         select id,email,sex,name,username,age,address,head_image,source,create_time,update_time 
+         from user
+         <include refid="listSql"/>
+         limit #{beginNum},#{onePageSize}
+    </select>
+    
+    <select id="count" resultType="int">
+         select count(0) from user
+         <include refid="listSql"/>
+    </select>
+    
+    <sql id="listSql">
+        where 1=1 
+         <if test="username!=null and username!=''">and username = #{username}</if>
+         <if test="email!=null and email!=''">and email = #{email}</if>
+    </sql>
+  
+</mapper>

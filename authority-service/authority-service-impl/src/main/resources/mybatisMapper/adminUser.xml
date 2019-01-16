@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjyx.authority.impl.mapper.AdminUserMapper">
+  
+	<select id="selectById" resultType="adminUser">
+	      select id,username,user_code,status,source,role_id,headimgurl,create_time,update_time,unionid,openid from admin_user where id=#{id}
+	</select>
+	<select id="loginByNamePass" resultType="adminUser">
+	      select id,username,user_code,status,source,role_id,headimgurl,create_time,update_time,unionid,openid from admin_user where username=#{0} and password=#{1}
+	</select>
+	
+</mapper>

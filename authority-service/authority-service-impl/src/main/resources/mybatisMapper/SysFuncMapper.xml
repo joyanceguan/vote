@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjyx.right.mapper.SysFuncMapper">
+  <resultMap id="BaseResultMap" type="sysFunc">
+    <result column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="FUNC_TYPE" jdbcType="VARCHAR" property="funcType" />
+    <result column="FUNC_URL" jdbcType="VARCHAR" property="funcUrl" />
+    <result column="PID" jdbcType="VARCHAR" property="pid" />
+    <result column="FUNC_SEQ" jdbcType="DECIMAL" property="funcSeq" />
+    <result column="SITE_ID" jdbcType="DECIMAL" property="siteId" />
+  </resultMap>
+  <insert id="insert" parameterType="sysFunc">
+    insert into SYS_FUNC (ID, NAME, FUNC_TYPE, 
+      FUNC_URL, PID, FUNC_SEQ, 
+      SITE_ID)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{funcType,jdbcType=VARCHAR}, 
+      #{funcUrl,jdbcType=VARCHAR}, #{pid,jdbcType=VARCHAR}, #{funcSeq,jdbcType=DECIMAL}, 
+      #{siteId,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="sysFunc">
+    insert into SYS_FUNC
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="funcType != null">
+        FUNC_TYPE,
+      </if>
+      <if test="funcUrl != null">
+        FUNC_URL,
+      </if>
+      <if test="pid != null">
+        PID,
+      </if>
+      <if test="funcSeq != null">
+        FUNC_SEQ,
+      </if>
+      <if test="siteId != null">
+        SITE_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="funcType != null">
+        #{funcType,jdbcType=VARCHAR},
+      </if>
+      <if test="funcUrl != null">
+        #{funcUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null">
+        #{pid,jdbcType=VARCHAR},
+      </if>
+      <if test="funcSeq != null">
+        #{funcSeq,jdbcType=DECIMAL},
+      </if>
+      <if test="siteId != null">
+        #{siteId,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+</mapper>

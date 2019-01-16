@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjyx.authority.impl.mapper.SysRoleMapper">
+  <resultMap id="BaseResultMap" type="sysRole">
+    <result column="ROLE_ID" jdbcType="VARCHAR" property="roleId" />
+    <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName" />
+    <result column="CREATEUSER" jdbcType="VARCHAR" property="createuser" />
+    <result column="SITE_ID" jdbcType="DECIMAL" property="siteId" />
+  </resultMap>
+  <insert id="insert" parameterType="sysRole">
+    insert into SYS_ROLE (ROLE_ID, ROLE_NAME, CREATEUSER, 
+      SITE_ID)
+    values (#{roleId,jdbcType=VARCHAR}, #{roleName,jdbcType=VARCHAR}, #{createuser,jdbcType=VARCHAR}, 
+      #{siteId,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="sysRole">
+    insert into SYS_ROLE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="roleId != null">
+        ROLE_ID,
+      </if>
+      <if test="roleName != null">
+        ROLE_NAME,
+      </if>
+      <if test="createuser != null">
+        CREATEUSER,
+      </if>
+      <if test="siteId != null">
+        SITE_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="roleId != null">
+        #{roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null">
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="createuser != null">
+        #{createuser,jdbcType=VARCHAR},
+      </if>
+      <if test="siteId != null">
+        #{siteId,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <select id="getListPage" resultType="sysRole" parameterType="sysRoleBean">
+	  select ROLE_ID as roleId, ROLE_NAME as roleName, CREATEUSER as createuser, SITE_ID as siteId from SYS_ROLE where 1=1 
+      <if test="roleId != null">
+         and ROLE_ID = #{roleId,jdbcType=VARCHAR}
+      </if>
+      <if test="roleName != null">
+         and ROLE_NAME like #{roleName,jdbcType=VARCHAR}
+      </if>
+      <if test="createuser != null">
+         and CREATEUSER = #{createuser,jdbcType=VARCHAR}
+      </if>
+      <if test="siteId != null">
+         and SITE_ID = #{siteId,jdbcType=DECIMAL}
+      </if>
+    <if test="onePageSize>1 and beginNum>-2">
+       	limit #{beginNum},#{onePageSize}
+    </if>
+  </select>
+  <select id="getListCount" resultType="Integer" parameterType="sysRoleBean">
+	  select count(*) from SYS_ROLE where 1=1 
+      <if test="roleId != null">
+         and ROLE_ID = #{roleId,jdbcType=VARCHAR}
+      </if>
+      <if test="roleName != null">
+         and ROLE_NAME like #{roleName,jdbcType=VARCHAR}
+      </if>
+      <if test="createuser != null">
+         and CREATEUSER = #{createuser,jdbcType=VARCHAR}
+      </if>
+      <if test="siteId != null">
+         and SITE_ID = #{siteId,jdbcType=DECIMAL}
+      </if>
+  </select>
+</mapper>

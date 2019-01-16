@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjyx.vote.impl.mapper.VoteTypeRelateMapper">
+  
+   <insert id="batchSave" parameterType="java.util.List" useGeneratedKeys="true">
+       INSERT INTO vote_type_relate 
+        (
+          vote_id,
+          type_id
+        )
+       VALUES
+       <foreach collection="list" item="item" separator=",">
+           (
+             #{item.vote_id}, 
+             #{item.type_id}
+           )
+       </foreach>
+    </insert>
+    
+    <select id="selectByTypeId" resultType="long">
+        select vote_id from vote_type_relate where type_id = #{type_id}
+    </select> 
+    
+    <select id="selectByVoteId" resultType="long">
+        select type_id from vote_type_relate where vote_id = #{vote_id}
+    </select>
+    
+    <delete id="deleteByVoteId">
+        delete from vote_type_relate where vote_id = #{vote_id}
+    </delete>
+    
+    <select id="selectByVoteIds" resultType="voteTypeResult">
+        select vtr.vote_id as voteId,vtr.type_id as typeId,vt.type_name as typeName
+        from vote_type_relate vtr inner join vote_type vt on
+        vtr.type_id = vt.id where vtr.vote_id in 
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">  
+               #{item}  
+        </foreach>
+    </select>
+    
+</mapper>

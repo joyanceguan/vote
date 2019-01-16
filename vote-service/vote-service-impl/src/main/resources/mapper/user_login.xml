@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjyx.vote.impl.mapper.UserLoginMapper">
+  
+  	<insert id="save" parameterType="userLogin" keyProperty="id" useGeneratedKeys="false">
+       insert into user_login
+       (
+          id,
+          username,
+          password,
+          email,
+          last_login_time,
+          status,
+          create_time,
+          update_time
+       )
+       values
+       (
+          #{id},
+          #{username},
+          #{password},
+          #{email},
+          #{last_login_time},
+          #{status},
+          now(),
+          now()
+       )
+    </insert>
+    
+    <update id="update">
+       update user_login 
+       <set>
+           <if test="password!=null and password!=''">password = #{password},</if>
+           <if test="status!=null and status!=''">status = #{status},</if>
+           <if test="last_login_time!=null and last_login_time!=''">last_login_time = #{last_login_time},</if>
+           update_time = #{update_time}
+       </set>
+    </update>
+  
+    <select id="selectByUsername" resultType="userLogin">
+        select id,username,password,email,last_login_time,status,create_time,update_time
+        from user_login where username = #{username}
+    </select>
+    
+    <select id="selectByEmail" resultType="userLogin">
+        select id,username,password,email,last_login_time,status,create_time,update_time
+        from user_login where email = #{email}
+    </select>
+</mapper>

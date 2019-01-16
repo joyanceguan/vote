@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjyx.vote.impl.mapper.VoteRecordMapper">
+  
+  	 <insert id="batchSave" parameterType="java.util.List" useGeneratedKeys="false">
+       INSERT INTO ${table_name}
+        (
+          id,
+          vote_id,
+          option_id,
+          option_desc,
+          user_id,
+          ip,
+          response_time,
+          see_type,
+          sex,
+          age,
+          batch_num,
+          create_time
+        )
+       VALUES
+       <foreach collection="list" item="item" separator=",">
+           (
+             #{item.id}, 
+             #{item.vote_id},
+             #{item.option_id},
+             #{item.option_desc},
+             #{item.user_id},
+             #{item.ip},
+             #{item.response_time},
+             #{item.see_type},
+             #{item.sex},
+             #{item.age},
+             #{item.batch_num},
+             #{item.create_time}
+           )
+       </foreach>
+    </insert>
+    
+    <insert id="save" useGeneratedKeys="false">
+       INSERT INTO ${table_name}
+        (
+          id,
+          vote_id,
+          option_id,
+          option_desc,
+          user_id,
+          ip,
+          response_time,
+          see_type,
+          sex,
+          age,
+          batch_num,
+          create_time
+        )
+       VALUES
+       (
+          #{id}, 
+          #{vote_id},
+          #{option_id},
+          #{option_desc},
+          #{user_id},
+          #{ip},
+          #{response_time},
+          #{see_type},
+          #{sex},
+          #{age},
+          #{batch_num},
+          #{create_time}
+       )
+    </insert>
+    
+    <select id="getVoteIdByUser" resultType="Long">
+        select vote_id from ${table_name} where user_id = #{user_id}
+    </select>
+    
+    <select id="rankList" resultType="voteResult">
+        select vote_id as id,count(vote_id) as count from
+        (
+           select vote_id,batch_num from ${table_name}
+           <where>
+              <if test="sex!=null">
+                 sex = #{sex}
+              </if>
+             <if test="beginTime!=null">
+                <![CDATA[and create_time >= #{beginTime}]]>
+             </if>
+             <if test="voteIds!=null and voteIds.size()>0">
+                and vote_id in
+                <foreach collection="voteIds" index="index" item="item" open="(" separator="," close=")">  
+                    #{item}  
+               </foreach>
+             </if>
+           </where>
+           group by vote_id,batch_num
+        ) as temp 
+        group by vote_id order by count desc
+        limit #{beginNum},#{onePageSize}
+    </select>
+    
+    <select id="rankListCount" resultType="int">
+        select count(distinct(vote_id)) from ${table_name}
+        <where>
+          <if test="beginTime!=null">
+             <![CDATA[ create_time >= #{beginTime}]]>
+          </if>
+          <if test="voteIds!=null and voteIds.size()>0">
+             and vote_id in
+             <foreach collection="voteIds" index="index" item="item" open="(" separator="," close=")">  
+                 #{item}  
+            </foreach>
+          </if>
+        </where>
+    </select>
+    
+    <select id="getByVoteIdUserId" resultType="voteRecord">
+       select vote_id,batch_num,create_time from ${table_name}
+       where user_id = #{user_id} and vote_id = #{vote_id}
+       group by vote_id,batch_num
+    </select>
+    
+    <select id="chooseOptionsCount" resultType="voteResult">
+        select option_id,count(option_id) from ${table_name} where vote_id = #{vote_id}
+        group by option_id
+    </select>
+    
+    <select id="responseTimeCount" resultType="int">
+       select count(1) from ${table_name} where vote_id = #{vote_id} and <![CDATA[response_time <= 1]]>  union
+       select count(1) from ${table_name} where vote_id = #{vote_id} and <![CDATA[response_time > 1 and response_time <= 3]]> union
+       select count(1) from ${table_name} where vote_id = #{vote_id} and <![CDATA[response_time > 3 and response_time <= 5]]> union
+       select count(1) from ${table_name} where vote_id = #{vote_id} and <![CDATA[response_time > 5 and response_time <= 10]]> union
+       select count(1) from ${table_name} where vote_id = #{vote_id} and <![CDATA[response_time > 10]]>
+    </select>
+      
+</mapper>

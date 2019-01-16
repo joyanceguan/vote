@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+				http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+    <!-- 自动扫描 -->  
+    <context:component-scan base-package="com.zjyx.authority.api,com.zjyx.authority.impl" >
+    </context:component-scan>
+    <!-- 引入配置文件 -->  
+    <bean id="authorityPropertyConfigurer"  
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> 
+        <property name="locations">  
+            <list>  
+               <value>classpath:authority-config.properties</value>  
+            </list>   
+        </property>    
+    </bean>  
+  
+    <bean id="authoritydataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">  
+        <property name="driverClassName" value="${authority.jdbc.driver}" />  
+        <property name="url" value="${authority.jdbc.url}" />  
+        <property name="username" value="${authority.jdbc.username}" />  
+        <property name="password" value="${authority.jdbc.password}" />  
+        <property name="initialSize" value="${authority.jdbc.initialSize}"></property>  
+        <property name="maxActive" value="${authority.jdbc.maxActive}"></property>  
+        <property name="maxIdle" value="${authority.jdbc.maxIdle}"></property>  
+        <property name="minIdle" value="${authority.jdbc.minIdle}"></property>  
+        <property name="maxWait" value="${authority.jdbc.maxWait}"></property>  
+    </bean>  
+  
+    <!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->  
+    <bean id="authoritySqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">  
+        <property name="dataSource" ref="authoritydataSource" />  
+        <property name="mapperLocations" value="classpath:/mybatisMapper/*.xml"></property>  
+        <property name="typeAliasesPackage" value="com.zjyx.authority.api.model" />
+        <property name="typeHandlersPackage" value="com.zjyx.authority.impl.typehandler" />
+    </bean>  
+  
+    <!-- DAO接口所在包名，Spring会自动查找其下的类 -->  
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">  
+        <property name="basePackage" value="com.zjyx.authority.impl.mapper" />  
+        <property name="sqlSessionFactoryBeanName" value="authoritySqlSessionFactory"></property>  
+    </bean>  
+    
+    <!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->  
+    <bean id="authoritytm" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+        <property name="dataSource" ref="authoritydataSource" />  
+    </bean>
+    
+    <!--使用注释事务 -->    
+    <tx:annotation-driven  transaction-manager="authoritytm" /> 
+</beans>

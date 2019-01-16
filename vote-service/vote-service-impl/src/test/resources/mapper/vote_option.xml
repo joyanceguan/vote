@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjyx.vote.impl.mapper.VoteOptionMapper">
+  
+   <insert id="batchSave" parameterType="java.util.List" useGeneratedKeys="true">
+       INSERT INTO vote_option 
+        (
+          vote_id,
+          option_desc,
+          vote_option_type,
+          sort,
+          create_time,
+          update_time
+        )
+       VALUES
+       <foreach collection="list" item="item" separator=",">
+           (
+             #{item.vote_id}, 
+             #{item.option_desc},
+             #{item.vote_option_type},
+             #{item.sort},
+             now(),
+             now()
+           )
+       </foreach>
+    </insert>
+    
+    <update id="batchUpdate">
+        <foreach collection="list" item="item" separator=",">
+          update vote_option set 
+           <if test="option!=null and option!=''">
+              option_desc = #{item.option_desc},
+           </if>
+           <if test="vote_option_type!=null and vote_option_type!=''">
+              vote_option_type = #{item.vote_option_type},
+           </if>
+           <if test="sort!=null and sort!=''">
+              sort = #{item.sort},
+           </if>
+           update_time=now();          
+       </foreach>
+    </update>
+  
+    <select id="selectByVoteId" resultType="voteOption">
+        select id,vote_id, option_desc,vote_option_type, sort,create_time, update_time 
+        from vote_option where vote_id=#{voteId}
+    </select>
+    
+    <delete id="deleteById">
+        delete from vote_option where id = #{id}
+    </delete>
+    
+    <delete id="deleteByIds">
+        delete from vote_option where id in 
+          <foreach collection="list" index="index" item="item" open="(" separator="," close=")">  
+               #{item}  
+          </foreach>
+    </delete>
+  
+   <delete id="deleteByVoteId">
+        delete from vote_option where vote_id = #{id}
+    </delete>
+</mapper>
