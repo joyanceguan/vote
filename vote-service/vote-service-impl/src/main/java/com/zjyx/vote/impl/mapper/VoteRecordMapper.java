@@ -11,7 +11,7 @@ import com.zjyx.vote.api.model.result.VoteResult;
 
 public interface VoteRecordMapper {
 
-	public int batchSave(List<VoteRecord> list);
+	public int batchSave(@Param("table_name") String tableName,@Param("list") List<VoteRecord> list);
 	
 	public int save(VoteRecord voteRecord);
 	

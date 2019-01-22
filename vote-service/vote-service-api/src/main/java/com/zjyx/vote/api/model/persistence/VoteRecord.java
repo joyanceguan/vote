@@ -19,7 +19,7 @@ public class VoteRecord {
 	//ip
 	private String ip;
 	//投票响应时间
-	private Date response_time;
+	private Long response_time;
 	//查看结果再投
 	private See_Type see_type;
 	//创建时间
@@ -64,10 +64,10 @@ public class VoteRecord {
 	public void setUser_id(Long user_id) {
 		this.user_id = user_id;
 	}
-	public Date getResponse_time() {
+	public Long getResponse_time() {
 		return response_time;
 	}
-	public void setResponse_time(Date response_time) {
+	public void setResponse_time(Long response_time) {
 		this.response_time = response_time;
 	}
 	public See_Type getSee_type() {

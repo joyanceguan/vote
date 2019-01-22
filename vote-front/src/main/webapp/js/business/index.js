@@ -88,7 +88,8 @@ function votesHtml(votes){
 		   for(var j = 0 ; j < vote_options.length ; j++){
 			   var option = vote_options[j];
 			   options += vote_option_html.replace(rplc("option_id"),option.id)
-	                                      .replace(rplc("option_desc"),option.option);
+	                                      .replace(rplc("option_desc"),option.option)
+			                              .replace(rplc("vote_id"),vote_id);
 		   }
 		   votelist += vote_html.replace(rplc("vote_id"),vote_id)
 		                        .replace(rplc("vote_title"),vote_title)    
@@ -97,9 +98,9 @@ function votesHtml(votes){
 	   return votelist;
 }
 
-var vote_html = "<div class=\"container\" id=\"portfolio-items-wrapper\" dataVal=\"vote_id\" onclick=\"window.location.href='/detail?id=vote_id'\">"+
+var vote_html = "<div class=\"container\" id=\"portfolio-items-wrapper\" dataVal=\"vote_id\">"+
                       "<div class=\"row\">"+
-                          "<div class=\"col-md-5\">"+
+                          "<div class=\"col-md-5\" onclick=\"window.location.href='/detail?id=vote_id'\">"+
                              "<div class=\"team-skills-content\">"+
                                 "<h4 style=\"font-weight: 800;\">vote_title</h4>"+
                                 "<!-- <p>vote.title<br></p> -->"+
@@ -115,7 +116,7 @@ var vote_html = "<div class=\"container\" id=\"portfolio-items-wrapper\" dataVal
                        "</div>  		<!-- End row -->"+
                      "</div>   	<!-- End container -->";
 
-var vote_option_html = "<li dataVal=\"option_id\">"+
+var vote_option_html = "<li dataVal=\"option_id\" onclick=\"vote(this);\" parent_id=\"vote_id\">"+
                                  "<span>option_desc</span>"+
                                  "<div class=\"progress\">"+
                                      "<div class=\"progress-bar\" style=\"width: 90%;\"></div>"+
@@ -124,4 +125,37 @@ var vote_option_html = "<li dataVal=\"option_id\">"+
 
 function rplc(str){
 	return new RegExp(str,"gm");
+}
+
+function vote(item){
+	
+	var param = {};
+	param.response_time = 0;
+	param.vote_id = $(item).attr('parent_id');
+	param.see_type = "without_see";
+	var voteOption = {};
+	voteOption.optionId = $(item).attr('dataVal');
+	voteOption.optionDesc = $(item).children('span').html();
+	var options = [];
+	options.push(voteOption);
+	param.voteOptions = options;
+	
+	$.ajax({
+		   async:false,
+		   data:JSON.stringify(param),
+		   dataType:"json",
+		   contentType:"application/json",
+		   url:"/save",
+		   type:"POST",
+		   success:function(data) {
+			   if(data.errorType == 'SUCCESS'){
+				   alert('投票成功');
+			   }else {
+				   alert(data.errorMessage);
+			   }
+        }, 
+        error:function(){
+           console.log("服务器繁忙...");
+        }
+})
 }

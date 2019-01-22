@@ -50,9 +50,8 @@ public class VoteRecordServiceImpl implements IVoteRecordService{
 	VoteRecordMapper voteRecordMapper;
 	
 	
-	private ReturnData<Integer> isCanVote(User user,Long vote_id){
+	private ReturnData<Integer> isCanVote(Vote vote,String tableName,User user,Long vote_id){
 		ReturnData<Integer> returnData = new ReturnData<Integer>();
-		Vote vote = voteMapper.selectById(vote_id);
 		String limitRule = vote.getLimit_rule();
 		VoteRuleDto voteRuleDto = JSON.parseObject(limitRule, VoteRuleDto.class);
 		//登录限制
@@ -61,8 +60,7 @@ public class VoteRecordServiceImpl implements IVoteRecordService{
 				returnData.setErrorInfo(Error_Type.SERVICE_ERROR, ErrorCode.RULE_LIMIT, "登录限制");
 			    return returnData;
 			}
-			String table_name = VoteRecordUtils.getRecordTableName(vote);
-			List<VoteRecordResult> recordList = voteRecordMapper.getByVoteIdUserId(vote_id,user.getId(),table_name);
+			List<VoteRecordResult> recordList = voteRecordMapper.getByVoteIdUserId(vote_id,user.getId(),tableName);
 			//投票次数限制
 			if(voteRuleDto.isEveryoneTotalLimit()){
 				int everyoneCount = voteRuleDto.getEveryoneCount();
@@ -130,9 +128,9 @@ public class VoteRecordServiceImpl implements IVoteRecordService{
 		return 0;
 	}
 	
-	private ReturnData<Integer> verfiySave(List<VoteRecord> voteRecords){
+	private ReturnData<Integer> verfiySave(List<VoteRecord> voteRecords,Long voteId){
 		ReturnData<Integer> returnData = new ReturnData<Integer>();
-		if(voteRecords == null || voteRecords.isEmpty()){
+		if(voteRecords == null || voteRecords.isEmpty() || voteId == null || voteId < 1){
 			returnData.setErrorType(Error_Type.PARAM_ERROR);
 			return returnData;
 		}
@@ -158,10 +156,6 @@ public class VoteRecordServiceImpl implements IVoteRecordService{
     			return returnData;
     		}
     		if(voteRecord.getSee_type() == null){
-    			returnData.setErrorType(Error_Type.PARAM_ERROR);
-    			return returnData;
-    		}
-    		if(voteRecord.getVote_id() == null){
     			returnData.setErrorType(Error_Type.PARAM_ERROR);
     			return returnData;
     		}
@@ -257,13 +251,19 @@ public class VoteRecordServiceImpl implements IVoteRecordService{
 
 	@Override
 	public ReturnData<Integer> batchSave(List<VoteRecord> records, User user,Long voteId) {
-		ReturnData<Integer> returnData = verfiySave(records);
+		ReturnData<Integer> returnData = verfiySave(records,voteId);
 		//参数校验
 		if(returnData.getErrorType()!=Error_Type.SUCCESS){
 			return returnData;
 		}
 		//投票规则校验
-		returnData = isCanVote(user,voteId);
+		Vote vote = voteMapper.selectById(voteId);
+		if(vote == null){
+			returnData.setErrorInfo(Error_Type.PARAM_ERROR, null, "无效的投票信息");
+			return returnData;
+		}
+		String tableName = VoteRecordUtils.getRecordTableName(vote);
+		returnData = isCanVote(vote,tableName,user,voteId);
 		if(returnData.getErrorType()!=Error_Type.SUCCESS){
 			return returnData;
 		}
@@ -287,7 +287,7 @@ public class VoteRecordServiceImpl implements IVoteRecordService{
 		}
 		//发送redis 之后优化时做
 //		sendRecordToRedis(voteRecord); 
-		int flag = voteRecordMapper.batchSave(records);
+		int flag = voteRecordMapper.batchSave(tableName,records);
 		//更新统计redis
 		sendCountToRedis(voteId);
 		returnData.setResultData(flag);

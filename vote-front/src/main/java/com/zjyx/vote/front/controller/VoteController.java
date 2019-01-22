@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -17,6 +18,7 @@ import com.zjyx.vote.api.model.persistence.VoteRecord;
 import com.zjyx.vote.api.service.IVoteRecordService;
 import com.zjyx.vote.common.enums.Error_Type;
 import com.zjyx.vote.common.model.BaseVM;
+import com.zjyx.vote.common.model.ReturnData;
 import com.zjyx.vote.common.utils.IPUtils;
 import com.zjyx.vote.front.entity.VoteOptionEntity;
 import com.zjyx.vote.front.param.VoteRecordParam;
@@ -30,7 +32,7 @@ public class VoteController {
 	
 	@RequestMapping("/save")
 	@ResponseBody
-	public BaseVM save(HttpServletRequest request,VoteRecordParam param){
+	public BaseVM save(HttpServletRequest request,@RequestBody VoteRecordParam param){
 		BaseVM baseVM = new BaseVM();
 		if(param == null){
 			baseVM.setErrorInfo(Error_Type.PARAM_ERROR, null, null);
@@ -41,7 +43,7 @@ public class VoteController {
 			baseVM.setErrorInfo(Error_Type.PARAM_ERROR, null, null);
 			return baseVM;
 		}
-		if(param.getResponse_time() == null){
+		if(param.getResponse_time() < 0){
 			baseVM.setErrorInfo(Error_Type.PARAM_ERROR, null, null);
 			return baseVM;
 		}
@@ -77,7 +79,8 @@ public class VoteController {
 		if(WebContextHelper.isLogin()){
 	       user = WebContextHelper.getUser().getUser();
 		}
-		voteRecordService.batchSave(recordList, user, param.getVote_id());
+		ReturnData<Integer> returnData = voteRecordService.batchSave(recordList, user, param.getVote_id());
+		baseVM.setErrorInfo(returnData);
 		return baseVM;
 	}
 }

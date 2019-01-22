@@ -16,7 +16,6 @@ import com.zjyx.vote.api.model.persistence.VoteRecord;
 import com.zjyx.vote.api.transaction.IVoteRecordTransSerivce;
 import com.zjyx.vote.api.utils.VoteRecordUtils;
 import com.zjyx.vote.common.enums.Error_Type;
-import com.zjyx.vote.common.exceptions.TransactionException;
 import com.zjyx.vote.common.model.ReturnData;
 import com.zjyx.vote.impl.mapper.VoteMapper;
 import com.zjyx.vote.impl.mapper.VoteRecordMapper;
@@ -68,30 +67,30 @@ public class VoteRecordTransSerivceImpl implements IVoteRecordTransSerivce{
 				list4.add(voteRecord);
 			}
 		}
-		if(list1.size()>0){
-		    int size = voteRecordMapper.batchSave(list1);
-		    if(size < list1.size()){
-		    	throw new TransactionException(Error_Type.SYSTEM_ERROR,null,null);
-		    }
-		}
-		if(list2.size()>0){
-			int size = voteRecordMapper.batchSave(list2);
-			if(size < list2.size()){
-		    	throw new TransactionException(Error_Type.SYSTEM_ERROR,null,null);
-		    }
-		}
-		if(list3.size()>0){
-			int size = voteRecordMapper.batchSave(list3);
-			if(size < list3.size()){
-		    	throw new TransactionException(Error_Type.SYSTEM_ERROR,null,null);
-		    }
-		}
-		if(list4.size()>0){
-			int size = voteRecordMapper.batchSave(list4);
-			if(size < list4.size()){
-		    	throw new TransactionException(Error_Type.SYSTEM_ERROR,null,null);
-		    }
-		}
+//		if(list1.size()>0){
+//		    int size = voteRecordMapper.batchSave(list1);
+//		    if(size < list1.size()){
+//		    	throw new TransactionException(Error_Type.SYSTEM_ERROR,null,null);
+//		    }
+//		}
+//		if(list2.size()>0){
+//			int size = voteRecordMapper.batchSave(list2);
+//			if(size < list2.size()){
+//		    	throw new TransactionException(Error_Type.SYSTEM_ERROR,null,null);
+//		    }
+//		}
+//		if(list3.size()>0){
+//			int size = voteRecordMapper.batchSave(list3);
+//			if(size < list3.size()){
+//		    	throw new TransactionException(Error_Type.SYSTEM_ERROR,null,null);
+//		    }
+//		}
+//		if(list4.size()>0){
+//			int size = voteRecordMapper.batchSave(list4);
+//			if(size < list4.size()){
+//		    	throw new TransactionException(Error_Type.SYSTEM_ERROR,null,null);
+//		    }
+//		}
 		return returnData;
 	}
 

@@ -125,11 +125,11 @@
     </select>
     
     <select id="responseTimeCount" resultType="int">
-       select count(1) from ${table_name} where vote_id = #{vote_id} and <![CDATA[response_time <= 1]]>  union
-       select count(1) from ${table_name} where vote_id = #{vote_id} and <![CDATA[response_time > 1 and response_time <= 3]]> union
-       select count(1) from ${table_name} where vote_id = #{vote_id} and <![CDATA[response_time > 3 and response_time <= 5]]> union
-       select count(1) from ${table_name} where vote_id = #{vote_id} and <![CDATA[response_time > 5 and response_time <= 10]]> union
-       select count(1) from ${table_name} where vote_id = #{vote_id} and <![CDATA[response_time > 10]]>
+       select count(1) from ${table_name} where vote_id = #{vote_id} and <![CDATA[response_time > 0 and response_time <= 1000]]>  union
+       select count(1) from ${table_name} where vote_id = #{vote_id} and <![CDATA[response_time > 1000 and response_time <= 3000]]> union
+       select count(1) from ${table_name} where vote_id = #{vote_id} and <![CDATA[response_time > 3000 and response_time <= 5000]]> union
+       select count(1) from ${table_name} where vote_id = #{vote_id} and <![CDATA[response_time > 5000 and response_time <= 10000]]> union
+       select count(1) from ${table_name} where vote_id = #{vote_id} and <![CDATA[response_time > 10000]]>
     </select>
       
 </mapper>
